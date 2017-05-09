@@ -1,7 +1,8 @@
 # An Example with Play Framework and Cassandra (Quill)
 This is an example REST API showing how to hook together Play Framework and Cassandra (using Quill)
 
-**Please note that this project is under construction**
+See the [phantom branch](https://github.com/calvinlfer/Play-Framework-Cassandra-Example/tree/phantom) for a Phantom 
+backed repository
 
 This project was created using [giter8](http://www.foundweekends.org/giter8):
 
