@@ -2,7 +2,7 @@
 This is an example REST API showing how to hook together Play Framework and Cassandra (using Phantom). 
 Phantom has been isolated to the repository interpreter.
 
-**Please note that this project is under construction**
+See the [quill branch](https://github.com/calvinlfer/Play-Framework-Cassandra-Example/tree/quill) for a Quill backed repository
 
 This project was created using [giter8](http://www.foundweekends.org/giter8):
 
