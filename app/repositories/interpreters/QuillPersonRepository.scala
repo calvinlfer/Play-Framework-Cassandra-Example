@@ -32,8 +32,13 @@ class QuillPersonRepository @Inject() (cassandra: CassandraAsyncContext[SnakeCas
 
   override def update(person: Person): Future[Person] = create(person)
 
-  override def delete(personId: UUID): Future[UUID] = {
+  override def deleteById(personId: UUID): Future[UUID] = {
     val deleteInstruction =  quote { (id: UUID) => querySchema[Person]("person_info").filter(_.id == id).delete }
     cassandra.run(deleteInstruction(lift(personId))).map(_ => personId)
+  }
+
+  override def findAll: Future[Seq[Person]] = {
+    val findAllInstruction = quote { querySchema[Person]("person_info")}
+    cassandra.run(findAllInstruction)
   }
 }

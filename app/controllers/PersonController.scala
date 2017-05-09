@@ -36,9 +36,13 @@ class PersonController @Inject()(personRepo: PersonRepository[Future])(implicit 
   def delete(id: UUID): Action[AnyContent] = Action.async { request =>
     personRepo.find(id).flatMap {
       case None => Future.successful(NotFound)
-      case Some(_) => personRepo.delete(id).map(_ => Ok)
+      case Some(_) => personRepo.deleteById(id).map(_ => Ok)
     }.recover { case _ => ServiceUnavailable }
   }
+
+  def findAll: Action[AnyContent] = Action.async(
+    personRepo.findAll.map(seqPerson => Ok(seqPerson.toJson))
+  )
 
   def onValidationSuccess[A](body: JsValue)(success: A => Future[Result])
                             (implicit rds: Reads[A]): Future[Result] = {
