@@ -26,19 +26,23 @@ class PersonController @Inject()(personRepo: PersonRepository[Future])(implicit 
     }
   }
 
-  def find(id: UUID): Action[AnyContent] = Action.async { request =>
+  def find(id: UUID): Action[AnyContent] = Action.async (
     personRepo.find(id).map {
       case None => NotFound
       case Some(existingPerson) => Ok(existingPerson.toJson)
     }.recover { case _ => ServiceUnavailable }
-  }
+  )
 
-  def delete(id: UUID): Action[AnyContent] = Action.async { request =>
+  def findAll: Action[AnyContent] = Action.async(
+    personRepo.findAll.map(seqPerson => Ok(seqPerson.toJson))
+  )
+
+  def delete(id: UUID): Action[AnyContent] = Action.async (
     personRepo.find(id).flatMap {
       case None => Future.successful(NotFound)
-      case Some(_) => personRepo.delete(id).map(_ => Ok)
+      case Some(_) => personRepo.deleteById(id).map(_ => Ok)
     }.recover { case _ => ServiceUnavailable }
-  }
+  )
 
   def onValidationSuccess[A](body: JsValue)(success: A => Future[Result])
                             (implicit rds: Reads[A]): Future[Result] = {
@@ -60,5 +64,4 @@ class PersonController @Inject()(personRepo: PersonRepository[Future])(implicit 
   implicit class Jsonable[A](a: A) {
     def toJson(implicit writes: Writes[A]): JsValue = Json.toJson(a)(writes)
   }
-
 }

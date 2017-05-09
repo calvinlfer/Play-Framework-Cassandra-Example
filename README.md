@@ -1,5 +1,6 @@
-# An Example with Play Framework and Cassandra (Quill)
-This is an example REST API showing how to hook together Play Framework and Cassandra (using Quill)
+# An Example with Play Framework and Cassandra (Phantom)
+This is an example REST API showing how to hook together Play Framework and Cassandra (using Phantom). 
+Phantom has been isolated to the repository interpreter.
 
 **Please note that this project is under construction**
 

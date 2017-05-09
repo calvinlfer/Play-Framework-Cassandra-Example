@@ -16,5 +16,8 @@ trait PersonRepository[Effect[_]] {
 
   def update(person: Person): Effect[Person]
 
-  def delete(personId: UUID): Effect[UUID]
+  def deleteById(personId: UUID): Effect[UUID]
+
+  // Please don't actually do this in production
+  def findAll: Effect[Seq[Person]]
 }

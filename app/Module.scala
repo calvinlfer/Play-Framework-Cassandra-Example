@@ -1,15 +1,16 @@
 import javax.inject.Singleton
+
 import com.google.inject.{AbstractModule, TypeLiteral}
-import io.getquill.{CassandraAsyncContext, SnakeCase}
+import com.outworkers.phantom.connectors.CassandraConnection
 import net.codingwell.scalaguice.ScalaModule
 import repositories.PersonRepository
-import repositories.interpreters.{CassandraAsyncContextProvider, QuillPersonRepository}
+import repositories.interpreters.{CassandraConnectionProvider, PhantomPersonRepository}
 
 import scala.concurrent.Future
 
 class Module extends AbstractModule with ScalaModule {
   override def configure(): Unit = {
-    bind[CassandraAsyncContext[SnakeCase]].toProvider[CassandraAsyncContextProvider].in[Singleton]
-    bind(new TypeLiteral[PersonRepository[Future]]{}).to(classOf[QuillPersonRepository])
+    bind[CassandraConnection].toProvider[CassandraConnectionProvider].in[Singleton]
+    bind(new TypeLiteral[PersonRepository[Future]]{}).to(classOf[PhantomPersonRepository])
   }
 }

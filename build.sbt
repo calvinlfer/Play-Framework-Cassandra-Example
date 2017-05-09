@@ -9,5 +9,5 @@ scalaVersion := "2.11.11"
 
 libraryDependencies ++= {
   import Dependencies._
-  Seq(filters, scalaTestPlus, cats, quillCassandra, scalaGuice)
+  Seq(filters, scalaTestPlus, cats, phantomCassandra, scalaGuice)
 }
