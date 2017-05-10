@@ -4,7 +4,7 @@ import java.util.UUID
 import javax.inject._
 
 import models.Person
-import models.dtos.{CreatePerson, ErrorCode, ErrorResponse}
+import models.dtos.{CreatePerson, ErrorCode, ErrorResponse, PersonsResult}
 import play.api.data.validation.ValidationError
 import play.api.libs.json._
 import play.api.mvc._
@@ -33,8 +33,8 @@ class PersonController @Inject()(personRepo: PersonRepository[Future])(implicit 
     }.recover { case _ => ServiceUnavailable }
   )
 
-  def findAll: Action[AnyContent] = Action.async(
-    personRepo.findAll.map(seqPerson => Ok(seqPerson.toJson))
+  def findAll(next: Option[String]): Action[AnyContent] = Action.async(
+    personRepo.findAll(next).map(personResult => Ok(PersonsResult(personResult.result, personResult.next).toJson))
   )
 
   def delete(id: UUID): Action[AnyContent] = Action.async (

@@ -5,6 +5,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 import cats.Monad
+import com.datastax.driver.core.PagingState
 import com.outworkers.phantom.CassandraTable
 import com.outworkers.phantom.builder.query.ListResult
 import com.outworkers.phantom.connectors.CassandraConnection
@@ -12,9 +13,10 @@ import com.outworkers.phantom.dsl._
 import models.Gender
 import models.Person
 import play.api.Configuration
-import repositories.PersonRepository
+import repositories.{Page, PersonRepository}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class PhantomPersonRepository @Inject()(config: Configuration, connection: CassandraConnection, ec: ExecutionContext)
   extends CassandraTable[PhantomPersonRepository, Person] with PersonRepository[Future] {
@@ -67,5 +69,17 @@ class PhantomPersonRepository @Inject()(config: Configuration, connection: Cassa
       .future()
       .map(_ => personId)
 
-  override def findAll: Future[Seq[Person]] = select.all().fetch()
+  override def findAll(pagingState: Option[String]): Future[Page[Seq[Person]]] = {
+    val cassandraPagingState = for {
+      pageString <- pagingState
+      pageState  <- Try(PagingState.fromString(pageString)).toOption
+    } yield pageState
+
+    for {
+      result <- select.all.paginateRecord { statement =>
+        cassandraPagingState.foreach(pagingState => statement.setPagingState(pagingState))
+        statement.setFetchSize(4)
+      }
+    } yield Page(result.records, Option(result.pagingState).map(_.toString))
+  }
 }

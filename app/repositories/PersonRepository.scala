@@ -7,6 +7,8 @@ import models.Person
 
 import scala.language.higherKinds
 
+case class Page[A](result: A, next: Option[String])
+
 trait PersonRepository[Effect[_]] {
   implicit val monad: Monad[Effect]
 
@@ -18,6 +20,5 @@ trait PersonRepository[Effect[_]] {
 
   def deleteById(personId: UUID): Effect[UUID]
 
-  // Please don't actually do this in production
-  def findAll: Effect[Seq[Person]]
+  def findAll(pagingState: Option[String]): Effect[Page[Seq[Person]]]
 }

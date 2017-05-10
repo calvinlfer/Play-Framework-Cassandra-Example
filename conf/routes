@@ -5,7 +5,7 @@
 
 # An example controller showing a sample home page
 POST    /persons                     controllers.PersonController.create
-GET     /persons                     controllers.PersonController.findAll
+GET     /persons                     controllers.PersonController.findAll(next: Option[String])
 GET     /persons/:personId           controllers.PersonController.find(personId: java.util.UUID)
 DELETE  /persons/:personId           controllers.PersonController.delete(personId: java.util.UUID)
 
