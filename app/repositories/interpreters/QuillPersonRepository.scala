@@ -20,6 +20,9 @@ class QuillPersonRepository @Inject() (cassandra: CassandraAsyncContext[SnakeCas
   
   override implicit val monad: Monad[Future] = cats.instances.future.catsStdInstancesForFuture
 
+  // Seems like there is no good way to pass in a custom table name without repeating it like this, so you need to stick
+  // to the defaults so if you use query[Person], it will look in a table named persons - you have to do something
+  // fancy at compile time
   override def create(person: Person): Future[Person] = {
     val insertInstruction = quote { (person: Person) => querySchema[Person]("person_info").insert(person) }
     cassandra.run(insertInstruction(lift(person))).map(_ => person)
