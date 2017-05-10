@@ -6,6 +6,7 @@ import javax.inject.Inject
 
 import cats.Monad
 import com.outworkers.phantom.CassandraTable
+import com.outworkers.phantom.builder.query.ListResult
 import com.outworkers.phantom.connectors.CassandraConnection
 import com.outworkers.phantom.dsl._
 import models.Gender
@@ -53,13 +54,18 @@ class PhantomPersonRepository @Inject()(config: Configuration, connection: Cassa
 
   // https://github.com/outworkers/phantom/wiki/Querying#query-api
   override def find(personId: UUID): Future[Option[Person]] =
-    select.where(_.id eqs personId).one()
+    select.where(_.id eqs personId)
+      .consistencyLevel_=(ConsistencyLevel.LOCAL_QUORUM)
+      .one()
 
   // can be more fancy https://github.com/outworkers/phantom/wiki/Querying#update-queries
   override def update(person: Person): Future[Person] = create(person)
 
   override def deleteById(personId: UUID): Future[UUID] =
-    delete.where(_.id eqs personId).future().map(_ => personId)
+    delete.where(_.id eqs personId)
+      .consistencyLevel_=(ConsistencyLevel.LOCAL_QUORUM)
+      .future()
+      .map(_ => personId)
 
   override def findAll: Future[Seq[Person]] = select.all().fetch()
 }
