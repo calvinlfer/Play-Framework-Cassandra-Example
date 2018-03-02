@@ -1,0 +1,9 @@
+version: '3.1'
+
+services:
+  cassandra:
+    image: cassandra:3.11
+    ports:
+      - "9042:9042"   # Native transport
+      - "7199:7199"   # JMX
+      - "9160:9160"   # Thrift clients
